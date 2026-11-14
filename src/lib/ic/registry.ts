@@ -399,4 +399,66 @@ export const IC_REGISTRY: Record<string, ICDefinition> = {
       };
     },
   },
+  // Example entry structure to match your existing registry
+'74138': {
+    id: '74138',
+    name: '3-to-8 Line Decoder / Demultiplexer',
+    category: 'MUX',
+    pinCount: 16,
+    description: '3-to-8 line decoder with 3 enable inputs (G1 active-HIGH; G2A, G2B active-LOW) and active-LOW outputs.',
+    vccPin: 16,
+    gndPin: 8,
+    pins: [
+      { pin: 1, name: 'A', direction: 'INPUT' },
+      { pin: 2, name: 'B', direction: 'INPUT' },
+      { pin: 3, name: 'C', direction: 'INPUT' },
+      { pin: 4, name: 'G2A', direction: 'INPUT' },
+      { pin: 5, name: 'G2B', direction: 'INPUT' },
+      { pin: 6, name: 'G1', direction: 'INPUT' },
+      { pin: 7, name: 'Y7', direction: 'OUTPUT' },
+      { pin: 8, name: 'GND', direction: 'GND' },
+      { pin: 9, name: 'Y6', direction: 'OUTPUT' },
+      { pin: 10, name: 'Y5', direction: 'OUTPUT' },
+      { pin: 11, name: 'Y4', direction: 'OUTPUT' },
+      { pin: 12, name: 'Y3', direction: 'OUTPUT' },
+      { pin: 13, name: 'Y2', direction: 'OUTPUT' },
+      { pin: 14, name: 'Y1', direction: 'OUTPUT' },
+      { pin: 15, name: 'Y0', direction: 'OUTPUT' },
+      { pin: 16, name: 'VCC', direction: 'VCC' },
+    ],
+    evaluate: (inputs, prevState) => {
+      const a = inputs[1] ?? 0;
+      const b = inputs[2] ?? 0;
+      const c = inputs[3] ?? 0;
+      const g2a = inputs[4] ?? 1;
+      const g2b = inputs[5] ?? 1;
+      const g1 = inputs[6] ?? 0;
+
+      const outputs: Record<number, LogicState> = {
+        15: 1, // Y0
+        14: 1, // Y1
+        13: 1, // Y2
+        12: 1, // Y3
+        11: 1, // Y4
+        10: 1, // Y5
+        9: 1,  // Y6
+        7: 1,  // Y7
+      };
+
+      if (g1 === 1 && g2a === 0 && g2b === 0) {
+        const select =
+          ((c === 1 ? 1 : 0) << 2) |
+          ((b === 1 ? 1 : 0) << 1) |
+          (a === 1 ? 1 : 0);
+
+        const outputPins = [15, 14, 13, 12, 11, 10, 9, 7];
+        outputs[outputPins[select]] = 0;
+      }
+
+      return {
+        outputs,
+        nextState: prevState,
+      };
+    },
+  },
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTrainerStore } from '@/store/useTrainerStore';
 import { IC_REGISTRY } from '@/lib/ic/registry';
 import { LogicState, TerminalId } from '@/lib/simulation/types';
@@ -26,6 +26,8 @@ function signalColor(state: LogicState | undefined, hasError = false): string {
 export const TrainerBoard: React.FC<{ onSelectSocket?: (socketIndex: number) => void }> = ({
   onSelectSocket,
 }) => {
+  const [mounted, setMounted] = useState(false);
+
   const {
     powerOn,
     inputSwitches,
@@ -45,6 +47,10 @@ export const TrainerBoard: React.FC<{ onSelectSocket?: (socketIndex: number) => 
     startOrCompleteWire,
     removeWire,
   } = useTrainerStore();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!clockRunning || !powerOn) return;
@@ -109,6 +115,12 @@ export const TrainerBoard: React.FC<{ onSelectSocket?: (socketIndex: number) => 
       </g>
     );
   };
+
+  if (!mounted) {
+    return (
+      <div className="w-full h-[600px] rounded-xl border border-slate-700 bg-slate-950 p-2 shadow-2xl animate-pulse" />
+    );
+  }
 
   return (
     <div className="w-full overflow-x-auto rounded-xl border border-slate-700 bg-slate-950 p-2 shadow-2xl">
@@ -365,7 +377,7 @@ export const TrainerBoard: React.FC<{ onSelectSocket?: (socketIndex: number) => 
             const midX = (p1.x + p2.x) / 2;
             const sag = Math.min(80, Math.hypot(p2.x - p1.x, p2.y - p1.y) * 0.22);
             const pathD = `M ${p1.x} ${p1.y} Q ${midX} ${Math.max(p1.y, p2.y) + sag} ${p2.x} ${p2.y}`;
-
+            const [mounted, setMounted] = useState(false);
             return (
               <g
                 key={wire.id}
