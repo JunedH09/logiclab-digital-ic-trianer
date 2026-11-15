@@ -377,7 +377,6 @@ export const TrainerBoard: React.FC<{ onSelectSocket?: (socketIndex: number) => 
             const midX = (p1.x + p2.x) / 2;
             const sag = Math.min(80, Math.hypot(p2.x - p1.x, p2.y - p1.y) * 0.22);
             const pathD = `M ${p1.x} ${p1.y} Q ${midX} ${Math.max(p1.y, p2.y) + sag} ${p2.x} ${p2.y}`;
-            const [mounted, setMounted] = useState(false);
             return (
               <g
                 key={wire.id}
